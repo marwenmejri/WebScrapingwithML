@@ -27,8 +27,8 @@ def collect_data(redash_url, api_key, chain_id, n_samples=300, data_dir='../../D
     chain_metadata = meta_data[chain_name]
 
     # query to collect all related data specific to the chain_id params
-    query2 = f"select url, data, parent_remoteid, name, created, updated, chainbrand, premoteid, gtin, id, " \
-             f"chain_id  from chainproduct where  created >'01/03/2022 09:59' and chain_id={chain_id} limit {n_samples} ; "
+    query2 = f"select url, name, created, updated, chainbrand, premoteid, gtin, id, chain_id  from chainproduct where " \
+             f" created >'01/03/2022 09:59' and chain_id={chain_id} limit {n_samples} ; "
     df = redash.get_raw_data(redash_url=redash_url, api_key=api_key, chain_id=chain_id, query=query2)
 
     # Preprocess the raw data : drop rows with nan value, transform gtin column

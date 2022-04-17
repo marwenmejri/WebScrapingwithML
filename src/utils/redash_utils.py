@@ -43,7 +43,8 @@ def get_raw_data(redash_url, api_key, chain_id, query):
             rows = json_response2['query_result']['data']['rows']
             break
         except KeyError as k:
-            print(k)
+            print("KeyError Exception occurred : ", k)
+            print(f"*** Request Attempt n° {i} Has Failed ***")
 
     return pd.DataFrame(rows)
 
@@ -59,8 +60,9 @@ def get_chain_name(redash_url, api_key, chain_id, query):
             chain_name = json_response2['query_result']['data']['rows'][0]['name']
             break
         except KeyError as k:
-            print(k)
-            print(f"*** {i} Request Attempt Has Failed")
+            print("KeyError Exception occurred : ", k)
+            print(f"*** Request Attempt n° {i} Has Failed ***")
+
     return chain_name
 
 
