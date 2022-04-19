@@ -1,4 +1,5 @@
 from src.utils import model_utils
+# import spacy_transformers
 
 
 def train(trained_model_output_dir='../../Models', config_file_path='config.cfg'):
@@ -17,4 +18,4 @@ def train(trained_model_output_dir='../../Models', config_file_path='config.cfg'
 
 
 if __name__ == '__main__':
-    train()
+    train(config_file_path='config.cfg')
