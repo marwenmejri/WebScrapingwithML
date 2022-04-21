@@ -1,4 +1,4 @@
-from src.utils import model_utils
+from utils import model_utils
 # import spacy_transformers
 
 

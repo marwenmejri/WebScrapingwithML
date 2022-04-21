@@ -1,4 +1,3 @@
-import pandas as pd
 from src.utils import data_utils
 import random
 

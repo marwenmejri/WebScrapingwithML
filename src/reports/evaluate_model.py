@@ -1,5 +1,5 @@
-from src.utils import model_utils
-from src.utils import confusion_matrix_utils
+from utils import model_utils
+from utils import confusion_matrix_utils
 
 
 def evaluate():
