@@ -1,8 +1,8 @@
-from utils import model_utils
+from src.utils import model_utils
 # import spacy_transformers
 
 
-def train(trained_model_output_dir='../../Models', config_file_path='config.cfg'):
+def train(trained_model_output_dir='Models', config_file_path='src/models/config.cfg'):
     """
     Function to train a spaCy english pipeline (NER + Tok2Vec) with the help of spaCy Command Line Interface
     :param: str: trained_model_output_dir: directory to save all trained models
@@ -18,4 +18,4 @@ def train(trained_model_output_dir='../../Models', config_file_path='config.cfg'
 
 
 if __name__ == '__main__':
-    train(config_file_path='config.cfg')
+    train(config_file_path='src/models/config.cfg')

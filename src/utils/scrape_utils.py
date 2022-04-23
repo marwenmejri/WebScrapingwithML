@@ -30,7 +30,7 @@ def make_numeric(gtin):
     return num_gtin
 
 
-def check_if_chain_name_already_exists(chain_name, data_dir='../../Data'):
+def check_if_chain_name_already_exists(chain_name, data_dir='Data'):
     file_list = glob.glob(f'{data_dir}/*{chain_name}*.xlsx')
     if len(file_list) > 0:
         return file_list[0]

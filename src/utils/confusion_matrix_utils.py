@@ -15,7 +15,7 @@ def load_data(file):
     return data
 
 
-def search_for_last_created_json_testdata(data_dir='../../Data'):
+def search_for_last_created_json_testdata(data_dir='Data'):
     list_of_files = glob.glob(f'{data_dir}/test*.json')
     if len(list_of_files) > 0:
         latest_file = max(list_of_files, key=os.path.getctime)
@@ -122,8 +122,8 @@ def make_formal_test():
                         ha="center", va="center",
                         color="white" if cm[i, j] > thresh else "black")
         fig.tight_layout()
-        pyplot.savefig(f"../reports/{model_name}_conf_matrix.png")
-        pyplot.show()
+        pyplot.savefig(f"src/reports/{model_name}_conf_matrix.png")
+        # pyplot.show()
         return cm, ax, pyplot
 
     plot_confusion_matrix(docs, classes=get_dataset_labels(), normalize=False)

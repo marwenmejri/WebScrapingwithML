@@ -4,7 +4,7 @@ from src.utils import model_utils
 from src.utils import cleaning_utils
 
 
-def make_predictions(url, website, meta_data_path='../../meta-data.json', use_last_trained_model=True):
+def make_predictions(url, website, meta_data_path='meta-data.json', use_last_trained_model=True):
     """
     Function to make prediction with the trained model
     :param url: str: url to extract information(make detections) on it
@@ -48,4 +48,4 @@ if __name__ == '__main__':
 
     URL = 'https://www.santediscount.com/lero-spiruline-bio-60-comprimes.html'
     WEBSITE = 'SantéDiscount'
-    make_predictions(url=URL, website=WEBSITE, use_last_trained_model=False)
+    make_predictions(url=URL, website=WEBSITE, use_last_trained_model=True)

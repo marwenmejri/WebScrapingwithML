@@ -112,6 +112,6 @@ def create_training(data):
 
 
 if __name__ == '__main__':
-    all_df_ = load_all_excel_files(data_dir='../../Data')
+    all_df_ = load_all_excel_files(data_dir='Data')
     print(all_df_.head())
     print(len(all_df_))

@@ -2,7 +2,7 @@ from src.utils import data_utils
 import random
 
 
-def annotate_data(data_dir='../../Data', save_data=True):
+def annotate_data(data_dir='Data', save_data=True):
     """
     function to transform raw data to a json formatted data (annotate all html text previously collected by the
     scraping job) by passing all html texts to a spaCy pipeline(Entity Ruler), split annotated data to training,

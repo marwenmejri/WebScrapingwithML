@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 
 
-def collect_data(redash_url, api_key, chain_id_list: list, n_samples=300, data_dir='../../Data'):
+def collect_data(redash_url, api_key, chain_id_list: list, n_samples=300, data_dir='Data'):
     """
     Function: make a request to the Redash API to collect data (urls + desired outputs) from a data-source and then scrap
     all collected urls, finally preprocess all collected html data (cleaning)
@@ -25,10 +25,9 @@ def collect_data(redash_url, api_key, chain_id_list: list, n_samples=300, data_d
 
         # create Excel file name
         file_path = scrape_utils.create_date_filename(data_name=chain_name, data_dir=data_dir, extension='xlsx')
-        all_files_paths.append(file_path)
 
         # load the correct metadata(dict containing html section to scrap) specific to this chainbrand name
-        meta_data = scrape_utils.load_data('../../meta-data.json')
+        meta_data = scrape_utils.load_data('meta-data.json')
         # Try to find Chainbrand meta-data (html section properties)
         try:
             chain_metadata = meta_data[chain_name]
@@ -61,6 +60,8 @@ def collect_data(redash_url, api_key, chain_id_list: list, n_samples=300, data_d
                     os.remove(chain_name_excel_file)
                     new_raw_data = pd.concat([old_df, new_collected_data], axis=0)
                     new_raw_data.to_excel(file_path, index=False)
+                    all_files_paths.append(file_path)
+
                     print(f"*** End of Collecting Data for Chainbrand \"{chain_name}\" ***")
                     # print(len(new_collected_data))
                     # print(len(old_df))
@@ -71,16 +72,18 @@ def collect_data(redash_url, api_key, chain_id_list: list, n_samples=300, data_d
             if len(collected_data) > 0:
                 # save scrapped data + desired output to an excel file
                 collected_data.to_excel(file_path, index=False)
+                all_files_paths.append(file_path)
+
             print(f"End of Collecting Data for Chainbrand \"{chain_name}\"")
 
-    return all_files_paths
+    return f"List of all saved Excel files : {all_files_paths}" if len(all_files_paths) > 0 else "No Excel File has been saved"
 
 
 if __name__ == '__main__':
-    load_dotenv()
+    load_dotenv('.env')
     REDASH_HOST = os.getenv('REDASH_HOST')
     API_KEY = os.getenv('API_KEY')
 
     N_SAMPLES = 20
-    CHAIN_IDS = [316]
+    CHAIN_IDS = [201]
     print(collect_data(redash_url=REDASH_HOST, api_key=API_KEY, chain_id_list=CHAIN_IDS, n_samples=N_SAMPLES))
