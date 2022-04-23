@@ -7,10 +7,10 @@
 - Python version to use in this project must be <= 3.8.9
 - use pip install -r requirements.txt to install all requirements
 
-###**Data Flow: from Redash to the Training pipeline**
+**Data Flow: from Redash to the Training pipeline**
 
 ![New Repo Workflow](https://user-images.githubusercontent.com/87497774/163716171-32524eea-42e1-4d93-b538-1d8e8f03ab1d.png)
 
 
-###**Our project life cycle is based on The CRoss Industry Standard Process for Data Mining (CRISP-DM)**
+**Our project life cycle is based on The CRoss Industry Standard Process for Data Mining (CRISP-DM)**
 ![Web Scraping  with ML WorkFlow](https://user-images.githubusercontent.com/87497774/163716166-7e6549e7-9fab-42e1-86ba-9433ec41bec9.png)
