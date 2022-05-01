@@ -76,7 +76,8 @@ def collect_data(redash_url, api_key, chain_id_list: list, n_samples=300, data_d
 
             print(f"End of Collecting Data for Chainbrand \"{chain_name}\"")
 
-    return f"List of all saved Excel files : {all_files_paths}" if len(all_files_paths) > 0 else "No Excel File has been saved"
+    return f"List of all saved Excel files : {all_files_paths}" if len(all_files_paths) > 0 else "No Excel File has " \
+                                                                                                 "been saved "
 
 
 if __name__ == '__main__':
@@ -84,6 +85,6 @@ if __name__ == '__main__':
     REDASH_HOST = os.getenv('REDASH_HOST')
     API_KEY = os.getenv('API_KEY')
 
-    N_SAMPLES = 20
-    CHAIN_IDS = [201]
+    N_SAMPLES = 50
+    CHAIN_IDS = [33]
     print(collect_data(redash_url=REDASH_HOST, api_key=API_KEY, chain_id_list=CHAIN_IDS, n_samples=N_SAMPLES))

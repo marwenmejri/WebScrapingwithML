@@ -1,5 +1,4 @@
 import spacy
-from spacy import displacy
 from src.utils import model_utils
 from src.utils import cleaning_utils
 
@@ -22,19 +21,22 @@ def make_predictions(url, website, meta_data_path='meta-data.json', use_last_tra
         if cleaned_html:
             if use_last_trained_model:
                 last_trained_model_path = model_utils.get_last_trained_model()
-                loaded_model = spacy.load(f'{last_trained_model_path}/model-last')
+                loaded_model = spacy.load(
+                    f'{last_trained_model_path}/model-last')
             else:
                 while True:
                     try:
-                        user_trained_model_path = input('Enter a Trained Model Path: ')
+                        user_trained_model_path = input(
+                            'Enter a Trained Model Path: ')
                         loaded_model = spacy.load(user_trained_model_path)
                         break
                     except Exception as e:
                         print('You Entered a wrong Model Path!! Try to Enter a Valid one')
-            colors = {'NAME': "#85C1E9", "BRAND": "#ff6961", "GTIN": "#00969e"}
-            options = {"ents": ['NAME', 'BRAND'], "colors": colors}
-            displacy.serve(loaded_model(cleaned_html), style='ent',
-                           port=8000, host="127.0.0.1", options=options)
+
+            doc = loaded_model(str(cleaned_html))
+            predictions = [{"label": ent.label_, "entity_text": ent.text}
+                           for ent in doc.ents]
+            return f"PREDICTIONS : {predictions}"
         else:
             return 'Choose a Valid Url'
     else:
@@ -42,10 +44,12 @@ def make_predictions(url, website, meta_data_path='meta-data.json', use_last_tra
 
 
 if __name__ == '__main__':
-    # URL = 'https://www.wanimo.com/fr/furets/jouet-pour-furet-sc201/tunnel-reversible-deluxe-sf5751/'
+    URL = 'https://www.cocooncenter.com/propolis-redon-pastilles-miel-propolis-bio-24-pastilles/80120.html'
+    WEBSITE = 'Cocooncenter'
+
     # URL = 'https://www.wanimo.com/fr/chats/alimentation-pour-chat-sc6/lily-s-kitchen-tasty-cuts-sf22308/'
     # WEBSITE = 'Wanimo'
 
-    URL = 'https://www.santediscount.com/lero-spiruline-bio-60-comprimes.html'
-    WEBSITE = 'SantéDiscount'
-    make_predictions(url=URL, website=WEBSITE, use_last_trained_model=True)
+    # URL = 'https://www.santediscount.com/lero-spiruline-bio-60-comprimes.html'
+    # WEBSITE = 'SantéDiscount'
+    make_predictions(url=URL, website=WEBSITE, use_last_trained_model=False)
