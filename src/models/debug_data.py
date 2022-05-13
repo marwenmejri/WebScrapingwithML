@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 
-def debug(base_config_file_path, config_file_path, epochs=20, use_gpu=False):
+def debug(base_config_file_path, config_file_path, epochs=5, use_gpu=False):
     """
         Autofill a partial .cfg file with all default values & Create the Config file to train the model using the
         spaCy 3.0 CLI https://spacy.io/api/cli
@@ -51,4 +51,6 @@ def debug(base_config_file_path, config_file_path, epochs=20, use_gpu=False):
 
 
 if __name__ == __name__:
-    debug(base_config_file_path='src/models/base_config.cfg', config_file_path='src/models/config.cfg')
+    debug(base_config_file_path='src/models/base_config.cfg',
+          config_file_path='src/models/config.cfg',
+          use_gpu=True)
