@@ -1,8 +1,8 @@
+import pandas as pd
 import spacy
 import json
 from tqdm import tqdm
 from spacy.tokens import DocBin
-import os
 import glob
 from datetime import datetime
 
@@ -38,22 +38,22 @@ def create_date_filename(data_name, data_dir, extension):
     return file_path
 
 
-def training_data_already_exists(data_dir, extension):
-    list_of_files = glob.glob(f'{data_dir}/annotated*.{extension}')
-    if len(list_of_files) > 0:
-        latest_file = max(list_of_files, key=os.path.getctime)
-        return latest_file
-    else:
-        return None
-
-
-def search_for_last_created_excel_file(data_dir):
+def search_for_excel_file(data_dir):
     list_of_files = glob.glob(f'{data_dir}/*.xlsx')
     if len(list_of_files) > 0:
-        latest_file = max(list_of_files, key=os.path.getctime)
-        return latest_file
+        return True
     else:
-        return None
+        return False
+
+
+def load_all_excel_files(data_dir):
+    list_of_excel_files = glob.glob(f'{data_dir}/*.xlsx')
+    all_df = pd.DataFrame()
+    for excel_file in list_of_excel_files:
+        one_excel_df = pd.read_excel(excel_file, index=False)
+        all_df = all_df.append(one_excel_df)
+
+    return all_df
 
 
 def train_test_split(data):
@@ -65,14 +65,14 @@ def train_test_split(data):
     return train_data, valid_data, test_data
 
 
-def create_spacy_pipeline_with_all_patterns(brands, names, gtins):
+def create_spacy_pipeline_with_all_patterns(chainbrands, names, gtins):
     """
         Add All patterns to the Entity Ruler
     """
     nlp = spacy.blank('en')
     ruler = nlp.add_pipe("entity_ruler", last=True)
-    for brand, name, gtin in zip(brands, names, gtins):
-        ruler.add_patterns([{"label": "BRAND", "pattern": f"{brand}"}])
+    for chainbrand, name, gtin in zip(chainbrands, names, gtins):
+        ruler.add_patterns([{"label": "CHAINBRAND", "pattern": f"{chainbrand}"}])
         ruler.add_patterns([{"label": "NAME", "pattern": f"{name}"}])
         ruler.add_patterns([{"label": "NAME", "pattern": f"{name.lower()}"}])
         ruler.add_patterns([{"label": "NAME", "pattern": f"{' '.join([_ for _ in name.split()][:-1])}"}])
@@ -112,4 +112,6 @@ def create_training(data):
 
 
 if __name__ == '__main__':
-    print(search_for_last_created_excel_file(data_dir='../../Data'))
+    all_df_ = load_all_excel_files(data_dir='Data')
+    print(all_df_.head())
+    print(len(all_df_))

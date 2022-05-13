@@ -1,7 +1,6 @@
 import json
 import requests
-from dotenv import load_dotenv
-import os
+# from dotenv import load_dotenv
 import pandas as pd
 
 
@@ -44,7 +43,9 @@ def get_raw_data(redash_url, api_key, chain_id, query):
             break
         except KeyError as k:
             print("KeyError Exception occurred : ", k)
-            print(f"*** Request Attempt n° {i} Has Failed ***")
+            print(f"*** Request Attempt to get RAW-DATA Has Failed for the {i} time ***")
+            if i == 3:
+                return "All 3 Request Attempt Has failed !!"
 
     return pd.DataFrame(rows)
 
@@ -61,7 +62,9 @@ def get_chain_name(redash_url, api_key, chain_id, query):
             break
         except KeyError as k:
             print("KeyError Exception occurred : ", k)
-            print(f"*** Request Attempt n° {i} Has Failed ***")
+            print(f"*** Request Attempt n° {i} to get CHAINBRAND NAME Has Failed ***")
+            if i == 3:
+                return "All 3 Request Attempt Has failed !!"
 
     return chain_name
 

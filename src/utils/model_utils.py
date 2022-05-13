@@ -12,7 +12,7 @@ def load_data(file):
     return data
 
 
-def get_spacy_data_path(data_partition, data_dir='../../Data'):
+def get_spacy_data_path(data_partition, data_dir='Data'):
     list_of_files = glob.glob(f'{data_dir}/{data_partition}*.spacy')
     if len(list_of_files) > 0:
         latest_file = max(list_of_files, key=os.path.getctime)
@@ -21,7 +21,7 @@ def get_spacy_data_path(data_partition, data_dir='../../Data'):
         return None
 
 
-def get_last_trained_model(trained_model_output_dir='../../Models'):
+def get_last_trained_model(trained_model_output_dir='Models'):
     list_of_models = glob.glob(f'{trained_model_output_dir}/*')
     if len(list_of_models) > 0:
         latest_file = max(list_of_models, key=os.path.getctime)
