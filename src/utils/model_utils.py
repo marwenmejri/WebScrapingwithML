@@ -56,6 +56,7 @@ def train_spacy_model(config_filepath, trained_model_output_dir, train_data_path
                     f"{train_data_path}",
                     "--paths.dev",
                     f"{valid_data_path}"])
+                    # "-g 0"])
 
     print("End Of Training")
 

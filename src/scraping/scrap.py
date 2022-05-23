@@ -1,6 +1,7 @@
-import pandas as pd
 from src.utils import redash_utils as redash
 from src.utils import scrape_utils
+
+import pandas as pd
 from dotenv import load_dotenv
 import os
 
@@ -33,28 +34,34 @@ def collect_data(redash_url, api_key, chain_id_list: list, n_samples=300, data_d
             chain_metadata = meta_data[chain_name]
         except KeyError as e:
             print("KeyError Exception occurred // Key value not found:  ", e)
-            return f"Try to enter a list of Valid Chain-IDS (This Chain-ID {chain_id} is Not yet Treated)"
+            print(f"Try to enter a list of Valid Chain-IDS (This Chain-ID {chain_id} is Not yet Treated)")
+            continue
 
         # query to collect all related data specific to the chain_id params
         query2 = f"select url, name, created, updated, chainbrand, premoteid, gtin, id, chain_id  from chainproduct " \
-                 f"where created >'01/03/2022 09:59' and chain_id={chain_id} limit {n_samples} ; "
+                 f"where gtin IS NOT NULL and created >'01/05/2022 09:59' and chain_id={chain_id} limit {n_samples} ; "
         df = redash.get_raw_data(redash_url=redash_url, api_key=api_key, chain_id=chain_id, query=query2)
+        # df.to_excel(f"{file_path}_redash.xlsx", index=False)
+        # print(df.shape)
+        # print(df.head())
 
         # Preprocess the raw data : drop rows with nan value, transform gtin column
         df = scrape_utils.preprocess_redash_data(df=df)
-
+        # print(df.shape)
+        # print(df.head())
         # Check if this Chainbrand has been already used to construct our data
         chain_name_excel_file = scrape_utils.check_if_chain_name_already_exists(chain_name=chain_name,
                                                                                 data_dir=data_dir)
 
         if chain_name_excel_file:
-            old_df = pd.read_excel(chain_name_excel_file, index=False)
+            old_df = pd.read_excel(chain_name_excel_file, engine='openpyxl', dtype={'gtin': str})
             non_seen_urls_df = scrape_utils.look_for_new_urls(new_df=df, old_df=old_df)
             # print(f"length non_seen_urls_df = {len(non_seen_urls_df)}")
             # print(non_seen_urls_df.shape)
             # print(non_seen_urls_df.head())
             if len(non_seen_urls_df) > 0:
                 # collect html data for all new urls specific to this chainbrand
+                print(f"Collecting {chain_name} data has started")
                 new_collected_data = scrape_utils.collect_all_html_text(df=non_seen_urls_df, meta_data=chain_metadata)
                 if len(new_collected_data) > 0:
                     os.remove(chain_name_excel_file)
@@ -62,19 +69,21 @@ def collect_data(redash_url, api_key, chain_id_list: list, n_samples=300, data_d
                     new_raw_data.to_excel(file_path, index=False)
                     all_files_paths.append(file_path)
 
-                    print(f"*** End of Collecting Data for Chainbrand \"{chain_name}\" ***")
+                    print(f"*** End of Collecting Data for Chain \"{chain_name}\" ***")
                     # print(len(new_collected_data))
                     # print(len(old_df))
                     # print(len(new_raw_data))
         else:
             # collect needed html data for all resulting urls from query 2
+            print(f"Collecting {chain_name} data has started")
             collected_data = scrape_utils.collect_all_html_text(df=df, meta_data=chain_metadata)
+            print(collected_data.shape)
             if len(collected_data) > 0:
                 # save scrapped data + desired output to an excel file
                 collected_data.to_excel(file_path, index=False)
                 all_files_paths.append(file_path)
 
-            print(f"End of Collecting Data for Chainbrand \"{chain_name}\"")
+                print(f"End of Collecting Data for Chain \"{chain_name}\"")
 
     return f"List of all saved Excel files : {all_files_paths}" if len(all_files_paths) > 0 else "No Excel File has " \
                                                                                                  "been saved "
@@ -85,6 +94,6 @@ if __name__ == '__main__':
     REDASH_HOST = os.getenv('REDASH_HOST')
     API_KEY = os.getenv('API_KEY')
 
-    N_SAMPLES = 50
-    CHAIN_IDS = [33]
+    N_SAMPLES = 100
+    CHAIN_IDS = [33, 50, 200, 201]
     print(collect_data(redash_url=REDASH_HOST, api_key=API_KEY, chain_id_list=CHAIN_IDS, n_samples=N_SAMPLES))

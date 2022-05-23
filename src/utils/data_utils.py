@@ -1,3 +1,5 @@
+from src.utils.cleaning_utils import clean_text
+
 import pandas as pd
 import spacy
 import json
@@ -5,6 +7,17 @@ from tqdm import tqdm
 from spacy.tokens import DocBin
 import glob
 from datetime import datetime
+
+# PRICE_PATTERN = [{"TEXT": {"REGEX": "[0-9]+[\,|\.]+[0-9]"}}]
+PRICE_PATTERN1 = [{"ORTH": "€", "OP": "+"}, {"TEXT": {"REGEX": "[0-9]+[\,|\.]+[0-9]"}}]
+PRICE_PATTERN12 = [{"TEXT": {"REGEX": "[0-9]+[\,|\.]+[0-9]"}}, {"ORTH": "€", "OP": "+"}]
+PRICE_PATTERN2 = [{"ORTH": "$", "OP": "+"}, {"TEXT": {"REGEX": "[0-9]+[\,|\.]+[0-9]"}}]
+PRICE_PATTERN22 = [{"TEXT": {"REGEX": "[0-9]+[\,|\.]+[0-9]"}}, {"ORTH": "$", "OP": "+"}]
+PRICE_PATTERN3 = [{"ORTH": "£", "OP": "+"}, {"TEXT": {"REGEX": "[0-9]+[\,|\.]+[0-9]"}}]
+PRICE_PATTERN32 = [{"TEXT": {"REGEX": "[0-9]+[\,|\.]+[0-9]"}}, {"ORTH": "£", "OP": "+"}]
+
+TAG_LIST = ['div', 'a', 'title', 'section', 'span', 'h', 'h1',
+            'h2', 'h3', 'li', 'tr', 'td', 'br', 'p', 'u', 'ul', 'meta', 'article', 'script']
 
 
 # Export Train & Test Data to json
@@ -17,15 +30,6 @@ def load_data(file):
 def save_data(file, data):
     with open(file, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
-
-
-def make_numeric(gtin):
-    numeric_characters = []
-    for c in gtin:
-        if c.isnumeric():
-            numeric_characters.append(c)
-    num_gtin = "".join(numeric_characters)
-    return num_gtin
 
 
 def create_date_filename(data_name, data_dir, extension):
@@ -50,7 +54,7 @@ def load_all_excel_files(data_dir):
     list_of_excel_files = glob.glob(f'{data_dir}/*.xlsx')
     all_df = pd.DataFrame()
     for excel_file in list_of_excel_files:
-        one_excel_df = pd.read_excel(excel_file, index=False)
+        one_excel_df = pd.read_excel(excel_file, index=False, engine='openpyxl', dtype={'gtin': str})
         all_df = all_df.append(one_excel_df)
 
     return all_df
@@ -65,19 +69,33 @@ def train_test_split(data):
     return train_data, valid_data, test_data
 
 
-def create_spacy_pipeline_with_all_patterns(chainbrands, names, gtins):
+def create_spacy_pipeline_with_all_patterns(chainbrands, names, gtins, urls):
     """
         Add All patterns to the Entity Ruler
     """
     nlp = spacy.blank('en')
     ruler = nlp.add_pipe("entity_ruler", last=True)
-    for chainbrand, name, gtin in zip(chainbrands, names, gtins):
+    for chainbrand, name, gtin, url in zip(chainbrands, names, gtins, urls):
+        chainbrand, name, gtin = clean_text(chainbrand, tag_list=TAG_LIST), clean_text(name,
+                                                                                       tag_list=TAG_LIST), clean_text(
+            gtin, tag_list=TAG_LIST)
+        # if 'wanimo' in url:
+        #     name = ' '.join([_ for _ in name.split()][:6])
         ruler.add_patterns([{"label": "CHAINBRAND", "pattern": f"{chainbrand}"}])
+        ruler.add_patterns([{"label": "CHAINBRAND", "pattern": f"{chainbrand.lower()}"}])
+        ruler.add_patterns([{"label": "CHAINBRAND", "pattern": f"{chainbrand.upper()}"}])
         ruler.add_patterns([{"label": "NAME", "pattern": f"{name}"}])
         ruler.add_patterns([{"label": "NAME", "pattern": f"{name.lower()}"}])
         ruler.add_patterns([{"label": "NAME", "pattern": f"{' '.join([_ for _ in name.split()][:-1])}"}])
         ruler.add_patterns([{"label": "NAME", "pattern": f"{' '.join([_ for _ in name.split()][:-2])}"}])
-        ruler.add_patterns([{"label": "NAME", "pattern": f"{' '.join([_ for _ in name.split()][:-3])}"}])
+        # ruler.add_patterns([{"label": "NAME", "pattern": f"{' '.join([_ for _ in name.split()][:-3])}"}])
+        # ruler.add_patterns([{"label": "PRICE", "pattern": PRICE_PATTERN}])
+        ruler.add_patterns([{"label": "PRICE", "pattern": PRICE_PATTERN1}])
+        ruler.add_patterns([{"label": "PRICE", "pattern": PRICE_PATTERN2}])
+        ruler.add_patterns([{"label": "PRICE", "pattern": PRICE_PATTERN3}])
+        ruler.add_patterns([{"label": "PRICE", "pattern": PRICE_PATTERN12}])
+        ruler.add_patterns([{"label": "PRICE", "pattern": PRICE_PATTERN22}])
+        ruler.add_patterns([{"label": "PRICE", "pattern": PRICE_PATTERN32}])
         ruler.add_patterns([{"label": "GTIN", "pattern": f"{gtin}"}])
     return nlp
 
@@ -111,7 +129,16 @@ def create_training(data):
     return db
 
 
-if __name__ == '__main__':
-    all_df_ = load_all_excel_files(data_dir='Data')
-    print(all_df_.head())
-    print(len(all_df_))
+def is_valide_train_sample(html, nlp, wanted_labels):
+    doc = nlp(html)
+    labels = sorted(list(set([ent.label_ for ent in doc.ents])))
+    wanted_labels = sorted(wanted_labels)
+    if all(x in labels for x in wanted_labels):
+        return True
+    else:
+        return False
+
+# if __name__ == '__main__':
+#     all_df_ = load_all_excel_files(data_dir='Data')
+#     print(all_df_.head())
+#     print(len(all_df_))

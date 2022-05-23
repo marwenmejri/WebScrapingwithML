@@ -2,7 +2,7 @@ from src.utils import data_utils
 import random
 
 
-def annotate_data(data_dir='Data', save_data=True):
+def annotate_data(data_dir='Data', wanted_labels=None, save_data=True):
     """
     function to transform raw data to a json formatted data (annotate all html text previously collected by the
     scraping job) by passing all html texts to a spaCy pipeline(Entity Ruler), split annotated data to training,
@@ -12,16 +12,25 @@ def annotate_data(data_dir='Data', save_data=True):
     :return: None
     """
 
+    if wanted_labels is None:
+        wanted_labels = ['GTIN', 'NAME', 'CHAINBRAND']
+
     # Load all Excel file and merge them in one big Pandas DataFrame
     raw_data_exist = data_utils.search_for_excel_file(data_dir=data_dir)
     if not raw_data_exist:
         print("There is no Raw Data present in the Data Directory")
     else:
         all_data_df = data_utils.load_all_excel_files(data_dir=data_dir)
+        # print(all_data_df.head())
         # Annotate all html texts with spaCy Entity ruler
-        names, chainbrands, gtins, all_html = all_data_df['name'], all_data_df['chainbrand'], all_data_df['gtin'], all_data_df['cleaned_html']
-        nlp = data_utils.create_spacy_pipeline_with_all_patterns(chainbrands=chainbrands, names=names, gtins=gtins)
-        annotated_data = [data_utils.parse_train_data(doc=d, nlp=nlp) for d in nlp.pipe(all_html)]
+        names, chainbrands, gtins, all_html, urls = all_data_df['name'].to_list(), all_data_df['chainbrand'].to_list(), \
+                                                    all_data_df['gtin'].to_list(), all_data_df[
+                                                        'cleaned_html'].to_list(), all_data_df['url'].to_list()
+        # print(gtins)
+        nlp = data_utils.create_spacy_pipeline_with_all_patterns(chainbrands=chainbrands, names=names, gtins=gtins,
+                                                                 urls=urls)
+        annotated_data = [data_utils.parse_train_data(doc=d, nlp=nlp) for d in nlp.pipe(all_html) if
+                          data_utils.is_valide_train_sample(html=d, nlp=nlp, wanted_labels=wanted_labels)]
         # We need to shuffle the new annotated data
         random.shuffle(annotated_data)
 
@@ -36,6 +45,14 @@ def annotate_data(data_dir='Data', save_data=True):
             test_data_name = data_utils.create_date_filename(data_name='test_data', data_dir=data_dir,
                                                              extension='json')
             data_utils.save_data(file=test_data_name, data=test_data)
+
+            train_data_name = data_utils.create_date_filename(data_name='train_data', data_dir=data_dir,
+                                                              extension='json')
+            data_utils.save_data(file=train_data_name, data=train_data)
+
+            valid_data_name = data_utils.create_date_filename(data_name='valid_data', data_dir=data_dir,
+                                                              extension='json')
+            data_utils.save_data(file=valid_data_name, data=valid_data)
 
         # Convert Annotated data to the spaCy Format and save the results if the saving params is True
         train_spacy = data_utils.create_training(data=train_data)
@@ -53,10 +70,9 @@ def annotate_data(data_dir='Data', save_data=True):
                                                                   data_dir=data_dir, extension='spacy')
             test_spacy.to_disk(test_spacy_filename)
 
-        return train_spacy, valid_spacy, test_spacy, test_data
+        return nlp
+        # return train_spacy, valid_spacy, test_spacy, test_data
 
 
 if __name__ == '__main__':
     annotate_data()
-
-

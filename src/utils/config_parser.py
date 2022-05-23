@@ -19,14 +19,12 @@ def parse_spacy_configfile(confi_file_path, epochs, data_dir='Data', use_gpu=Fal
         valid_data_path = valid_data_path.replace("\\", "/")
 
         # Make modifications : update train, dev paths é epochs
-        config.set(section='paths', option='train',
-                   value=f'"{train_data_path}"')
+        config.set(section='paths', option='train', value=f'"{train_data_path}"')
         config.set(section='paths', option='dev', value=f'"{valid_data_path}"')
         config.set(section='training', option='max_epochs', value=str(epochs))
 
         if use_gpu:
-            config.set(section='system', option='gpu_allocator',
-                       value='"pytorch"')
+            config.set(section='system', option='gpu_allocator', value='"tensorflow"')
 
         # Saving all modifications to the config file
         with open(f"{confi_file_path}", 'w') as config_file:

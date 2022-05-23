@@ -1,4 +1,5 @@
 from src.utils import cleaning_utils
+
 import pandas as pd
 import json
 from datetime import datetime
@@ -27,6 +28,13 @@ def make_numeric(gtin):
         if c.isnumeric():
             numeric_characters.append(c)
     num_gtin = "".join(numeric_characters)
+    # try:
+    #     num_gtin = int(float(num_gtin))
+    # except Exception as e:
+    #     print(e)
+    #     print("**************")
+    #     print('num_gtin; ', num_gtin, 'gtin :', gtin)
+
     return num_gtin
 
 
@@ -38,10 +46,25 @@ def check_if_chain_name_already_exists(chain_name, data_dir='Data'):
         return None
 
 
+def is_valid_gtin(gtin):
+    numeric_characters = []
+    for c in gtin:
+        if c.isnumeric():
+            # print(c)
+            numeric_characters.append(c)
+    num_gtin = "".join(numeric_characters)
+    if len(num_gtin) > 8:
+        return True
+    else:
+        return False
+
+
 def preprocess_redash_data(df: pd.DataFrame):
     df.dropna(axis=0, how='any', inplace=True)
     df = df.reset_index(drop=True)
     df = df.loc[df['gtin'] != '[]']
+    df['to_drop'] = df['gtin'].apply(lambda x: False if is_valid_gtin(gtin=x) else True)
+    df = df.loc[df["to_drop"] == False]
     df['gtin'] = df['gtin'].apply(lambda d: make_numeric(d))
     df = df.reset_index(drop=True)
 
@@ -51,7 +74,8 @@ def preprocess_redash_data(df: pd.DataFrame):
 def look_for_new_urls(new_df: pd.DataFrame, old_df: pd.DataFrame):
     old_urls = old_df['url'].to_list()
     rows = []
-    urls, names, chainbrands, gtins = new_df['url'].to_list(), new_df['name'].to_list(), new_df['chainbrand'].to_list(), new_df['gtin'].to_list()
+    urls, names, chainbrands, gtins = new_df['url'].to_list(), new_df['name'].to_list(), new_df['chainbrand'].to_list(), \
+                                      new_df['gtin'].to_list()
     columns = ['url', 'name', 'chainbrand', 'gtin']
     for url, name, chainbrand, gtin in zip(urls, names, chainbrands, gtins):
         if url not in old_urls:
