@@ -26,7 +26,7 @@
                     "Tartecosmetics US": {
                         "tag": "div",
                         "attribute": "id",
-                        "attribute_value": "pdpMain",
+                        "attribute_value": "product-content",
                         "chain_id": 316
                     },
                     "Maccosmetics US": {
@@ -40,5 +40,37 @@
                         "attribute": "id",
                         "attribute_value": "product-content",
                         "chain_id": 314
+                    },
+                    "Target": {
+                        "tag": "div",
+                        "attribute": "id",
+                        "attribute_value": "pageBodyContainer",
+                        "chain_id": 248
+                    },
+                    "1001pneus": {
+                        "tag": "body",
+                        "attribute": "data-container",
+                        "attribute_value": "body",
+                        "chain_id": 65
+                    },
+                    "Clinique JP": {
+                        "tag": "div",
+                        "attribute": "class",
+                        "attribute_value": "sd-product-spp__product-full",
+                        "chain_id": 304
+                    },
+                    "Profil+": {
+                        "tag": "div",
+                        "attribute": "class",
+                        "attribute_value": "pp3-tires-show-presentation",
+                        "chain_id": 218
+                    },
+                    "l'auto E.Leclerc": {
+                        "tag": "div",
+                        "attribute": "id",
+                        "attribute_value": "presentationgenerale",
+                        "chain_id": 219
                     }
 }
+
+

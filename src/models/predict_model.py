@@ -1,9 +1,11 @@
-import spacy
 from src.utils import model_utils
 from src.utils import cleaning_utils
 
+import spacy
+from spacy import displacy
 
-def make_predictions(url, website, meta_data_path='meta-data.json', use_last_trained_model=True):
+
+def make_predictions(url, website, use_last_trained_model=True, meta_data_path='meta-data.json'):
     """
     Function to make prediction with the trained model
     :param url: str: url to extract information(make detections) on it
@@ -34,9 +36,22 @@ def make_predictions(url, website, meta_data_path='meta-data.json', use_last_tra
                         print('You Entered a wrong Model Path!! Try to Enter a Valid one')
 
             doc = loaded_model(str(cleaned_html))
-            predictions = [{"label": ent.label_, "entity_text": ent.text}
-                           for ent in doc.ents]
-            return f"PREDICTIONS : {predictions}"
+            predictions = [{ent.label_: ent.text} for ent in doc.ents]
+            new_dict = {}
+            for pred in predictions:
+                if list(pred.keys())[0] not in list(new_dict.keys()):
+                    new_dict[list(pred.keys())[0]] = [list(pred.values())[0]]
+                else:
+                    new_dict[list(pred.keys())[0]].append(list(pred.values())[0])
+            for key, value in new_dict.items():
+                new_dict[key] = set(value)
+
+            print(f"\n \n **** Predictions **** : {new_dict}")
+
+            colors = {'NAME': "#85C1E9", "CHAINBRAND": "#ff6961", "GTIN": "#00969e", "PRICE": "#00969e"}
+            options = {"ents": ['NAME', 'CHAINBRAND', 'GTIN', 'PRICE'], "colors": colors}
+            displacy.serve(loaded_model(str(cleaned_html)), style='ent', port=8000, host="127.0.0.1", options=options)
+
         else:
             return 'Choose a Valid Url'
     else:
@@ -44,12 +59,12 @@ def make_predictions(url, website, meta_data_path='meta-data.json', use_last_tra
 
 
 if __name__ == '__main__':
-    URL = 'https://www.cocooncenter.com/propolis-redon-pastilles-miel-propolis-bio-24-pastilles/80120.html'
-    WEBSITE = 'Cocooncenter'
+    # URL = 'https://www.cocooncenter.com/propolis-redon-pastilles-miel-propolis-bio-24-pastilles/80120.html'
+    # WEBSITE = 'Cocooncenter'
 
     # URL = 'https://www.wanimo.com/fr/chats/alimentation-pour-chat-sc6/lily-s-kitchen-tasty-cuts-sf22308/'
     # WEBSITE = 'Wanimo'
 
-    # URL = 'https://www.santediscount.com/lero-spiruline-bio-60-comprimes.html'
-    # WEBSITE = 'SantéDiscount'
-    make_predictions(url=URL, website=WEBSITE, use_last_trained_model=False)
+    URL = 'https://www.santediscount.com/lero-spiruline-bio-60-comprimes.html'
+    WEBSITE = 'SantéDiscount'
+    print(make_predictions(url=URL, website=WEBSITE, use_last_trained_model=True))
