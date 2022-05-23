@@ -1,0 +1,76 @@
+{
+                    "Wanimo": {
+                        "tag": "div",
+                        "attribute": "class",
+                        "attribute_value": "fiche-produit-classic",
+                        "chain_id": 33
+                    },
+                    "Maxi Zoo": {
+                        "tag": "div",
+                        "attribute": "class",
+                        "attribute_value": "section section--constrained-l section--pt-xs section--pb-xs",
+                        "chain_id": 230
+                    },
+                    "Cocooncenter": {
+                        "tag": "div",
+                        "attribute": "id",
+                        "attribute_value": "fiche",
+                        "chain_id": 201
+                    },
+                    "SantéDiscount": {
+                        "tag": "section",
+                        "attribute": "class",
+                        "attribute_value": "product-view-essential",
+                        "chain_id": 200
+                    },
+                    "Tartecosmetics US": {
+                        "tag": "div",
+                        "attribute": "id",
+                        "attribute_value": "product-content",
+                        "chain_id": 316
+                    },
+                    "Maccosmetics US": {
+                        "tag": "div",
+                        "attribute": "class",
+                        "attribute_value": "product-full__spp-block",
+                        "chain_id": 313
+                    },
+                    "Narscosmetics US": {
+                        "tag": "div",
+                        "attribute": "id",
+                        "attribute_value": "product-content",
+                        "chain_id": 314
+                    },
+                    "Target": {
+                        "tag": "div",
+                        "attribute": "id",
+                        "attribute_value": "pageBodyContainer",
+                        "chain_id": 248
+                    },
+                    "1001pneus": {
+                        "tag": "body",
+                        "attribute": "data-container",
+                        "attribute_value": "body",
+                        "chain_id": 65
+                    },
+                    "Clinique JP": {
+                        "tag": "div",
+                        "attribute": "class",
+                        "attribute_value": "sd-product-spp__product-full",
+                        "chain_id": 304
+                    },
+                    "Profil+": {
+                        "tag": "div",
+                        "attribute": "class",
+                        "attribute_value": "pp3-tires-show-presentation",
+                        "chain_id": 218
+                    },
+                    "l'auto E.Leclerc": {
+                        "tag": "div",
+                        "attribute": "id",
+                        "attribute_value": "presentationgenerale",
+                        "chain_id": 219
+                    }
+}
+
+
