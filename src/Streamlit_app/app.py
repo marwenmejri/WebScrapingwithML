@@ -26,6 +26,8 @@ selected_model = st.sidebar.selectbox('Which Model do you like to use?', spacy_m
 
 entered_website = st.text_input(label="Please enter a Valid Website name")
 meta_data = data_utils.load_data(file='meta-data.json')
+# print(meta_data[entered_website])
+
 if entered_website:
     if entered_website in list(meta_data.keys()):
         data = meta_data[entered_website]
@@ -35,8 +37,8 @@ if entered_website:
 
 entered_url = st.text_input(label="Url to extract Data from")
 if entered_url:
-    html_text = get_html_text(url=entered_url, data=data)
-    print(html_text)
+    html_text = get_html_text(url=entered_url, data=meta_data[entered_website])
+    # print(html_text)
     if html_text:
         st.success("Succeeded to extract Html data from the given URL")
         button_analyse = st.button("make detections")
