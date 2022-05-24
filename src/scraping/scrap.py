@@ -94,6 +94,6 @@ if __name__ == '__main__':
     REDASH_HOST = os.getenv('REDASH_HOST')
     API_KEY = os.getenv('API_KEY')
 
-    N_SAMPLES = 100
-    CHAIN_IDS = [33, 50, 200, 201]
+    N_SAMPLES = 10
+    CHAIN_IDS = [218, 65, 11, 1]
     print(collect_data(redash_url=REDASH_HOST, api_key=API_KEY, chain_id_list=CHAIN_IDS, n_samples=N_SAMPLES))
